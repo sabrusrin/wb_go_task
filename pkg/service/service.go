@@ -9,9 +9,9 @@ import (
 
 // Service ...
 type Service interface {
-	GetServiceUser(_ context.Context,  request *v1.UserRequest) (response v1.UserResponse, err error)
-	PutServiceOrder(_ context.Context,  request *v1.OrdersRequest) (response v1.OrdersResponse, err error)
-	GetUser(_ context.Context,  request *v1.UserRequest) (response v1.UserResponse, err error)
+	GetServiceUser(ctx context.Context, request *v1.UserRequest) (response v1.UserResponse, err error)
+	PutServiceOrder(ctx context.Context, request *v1.OrdersRequest) (response v1.OrdersResponse, err error)
+	GetUser(ctx context.Context, request *v1.UserRequest) (response v1.UserResponse, err error)
 	GetOrders() (response v1.OrdersResponse)
 }
 
@@ -40,7 +40,7 @@ func (s *service) PutServiceOrder(_ context.Context, request *v1.OrdersRequest,
 	return
 }
 
-func (s *service) GetUser(_ context.Context,  request *v1.UserRequest,
+func (s *service) GetUser(_ context.Context, request *v1.UserRequest,
 ) (response v1.UserResponse, err error) {
 	if request.UserId <= 0 {
 		err = fmt.Errorf("error: bad user ID")

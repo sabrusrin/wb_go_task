@@ -2,36 +2,36 @@ package v1
 
 // Order data
 type Order struct {
-	Res bool
+	Res bool `json:"res"`
 }
 
 // OrdersRequest ...
 type OrdersRequest struct {
-	OrderId int
+	OrderId int `json:"orderId"`
 }
 
 // OrdersResponse ...
 type OrdersResponse struct {
-	Error       bool
-	ErrorText   string
-	Data        *Order
-	CustomError map[string]string
+	Error       bool              `json:"error"`
+	ErrorText   string            `json:"errorText"`
+	Data        *Order            `json:"data"`
+	CustomError map[string]string `json:"additionalErrors"`
 }
 
 // User data
 type User struct {
-	Res bool
+	Res bool `json:"res"`
 }
 
 // UserRequest
 type UserRequest struct {
-	UserId int
+	UserId int `json:"userId"`
 }
 
 // UserResponse ...
 type UserResponse struct {
-	Error       bool
-	ErrorText   string
-	Data        *User
-	CustomError map[string]string
+	Error       bool              `json:"error"`
+	ErrorText   string            `json:"errorText"`
+	Data        *User             `json:"data"`
+	CustomError map[string]string `json:"additionalErrors"`
 }
