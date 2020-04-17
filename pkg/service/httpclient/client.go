@@ -11,26 +11,12 @@ import (
 	v1 "github.com/sabrusrin/wb_go_task/pkg/api/v1"
 )
 
-var (
-	GetServiceUser  = option{}
-	PutServiceOrder = option{}
-	GetUser         = option{}
-	GetOrders       = option{}
-)
-
-type option struct{}
-
-// Option ...
-type Option interface {
-	Prepare(ctx context.Context, r *fasthttp.Request)
-}
-
 // Service implements Service interface
 type Service interface {
 	GetServiceUser(ctx context.Context, request *v1.UserRequest) (response v1.UserResponse, err error)
 	PutServiceOrder(ctx context.Context, request *v1.OrdersRequest) (response v1.OrdersResponse, err error)
 	GetUser(ctx context.Context, request *v1.UserRequest) (response v1.UserResponse, err error)
-	GetOrders(ctx context.Context, ) (response v1.OrdersResponse, err error)
+	GetOrders() (response v1.OrdersResponse)
 }
 
 type client struct {
@@ -40,7 +26,6 @@ type client struct {
 	transportPutServiceOrder PutServiceOrderClientTransport
 	transportGetUser         GetUserClientTransport
 	transportGetOrders       GetOrdersClientTransport
-	options                  map[interface{}]Option
 }
 
 // GetServiceUser ...
@@ -50,9 +35,6 @@ func (s *client) GetServiceUser(ctx context.Context, request *v1.UserRequest) (r
 		fasthttp.ReleaseRequest(req)
 		fasthttp.ReleaseResponse(res)
 	}()
-	if opt, ok := s.options[GetServiceUser]; ok {
-		opt.Prepare(ctx, req)
-	}
 	if err = s.transportGetServiceUser.EncodeRequest(ctx, req, request); err != nil {
 		return
 	}
@@ -70,9 +52,6 @@ func (s *client) PutServiceOrder(ctx context.Context, request *v1.OrdersRequest)
 		fasthttp.ReleaseRequest(req)
 		fasthttp.ReleaseResponse(res)
 	}()
-	if opt, ok := s.options[PutServiceOrder]; ok {
-		opt.Prepare(ctx, req)
-	}
 	if err = s.transportPutServiceOrder.EncodeRequest(ctx, req, request); err != nil {
 		return
 	}
@@ -90,9 +69,6 @@ func (s *client) GetUser(ctx context.Context, request *v1.UserRequest) (response
 		fasthttp.ReleaseRequest(req)
 		fasthttp.ReleaseResponse(res)
 	}()
-	if opt, ok := s.options[GetUser]; ok {
-		opt.Prepare(ctx, req)
-	}
 	if err = s.transportGetUser.EncodeRequest(ctx, req, request); err != nil {
 		return
 	}
@@ -104,23 +80,22 @@ func (s *client) GetUser(ctx context.Context, request *v1.UserRequest) (response
 }
 
 // GetOrders ...
-func (s *client) GetOrders(ctx context.Context, ) (response v1.OrdersResponse, err error) {
+func (s *client) GetOrders() (response v1.OrdersResponse) {
+	var err error
 	req, res := fasthttp.AcquireRequest(), fasthttp.AcquireResponse()
 	defer func() {
 		fasthttp.ReleaseRequest(req)
 		fasthttp.ReleaseResponse(res)
 	}()
-	if opt, ok := s.options[GetOrders]; ok {
-		opt.Prepare(ctx, req)
-	}
-	if err = s.transportGetOrders.EncodeRequest(ctx, req, ); err != nil {
+	if err = s.transportGetOrders.EncodeRequest(); err != nil {
 		return
 	}
 	err = s.cli.Do(req, res)
 	if err != nil {
 		return
 	}
-	return s.transportGetOrders.DecodeResponse(ctx, res)
+	response, err = s.transportGetOrders.DecodeResponse(res)
+	return
 }
 
 // NewClient the client creator
@@ -131,7 +106,6 @@ func NewClient(
 	transportPutServiceOrder PutServiceOrderClientTransport,
 	transportGetUser GetUserClientTransport,
 	transportGetOrders GetOrdersClientTransport,
-	options map[interface{}]Option,
 ) Service {
 	return &client{
 		cli: cli,
@@ -140,7 +114,6 @@ func NewClient(
 		transportPutServiceOrder: transportPutServiceOrder,
 		transportGetUser:         transportGetUser,
 		transportGetOrders:       transportGetOrders,
-		options:                  options,
 	}
 }
 
@@ -149,7 +122,6 @@ func NewPreparedClient(
 	serverURL string,
 	serverHost string,
 	maxConns int,
-	options map[interface{}]Option,
 	errorProcessor errorProcessor,
 	errorCreator errorCreator,
 
@@ -202,6 +174,5 @@ func NewPreparedClient(
 		transportPutServiceOrder,
 		transportGetUser,
 		transportGetOrders,
-		options,
 	)
 }

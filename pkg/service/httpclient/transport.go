@@ -174,8 +174,8 @@ func NewGetUserClientTransport(
 
 // GetOrdersClientTransport transport interface
 type GetOrdersClientTransport interface {
-	EncodeRequest(ctx context.Context, r *fasthttp.Request, ) (err error)
-	DecodeResponse(ctx context.Context, r *fasthttp.Response) (response v1.OrdersResponse, err error)
+	EncodeRequest() (err error)
+	DecodeResponse(r *fasthttp.Response) (response v1.OrdersResponse, err error)
 }
 
 type getOrdersClientTransport struct {
@@ -186,20 +186,12 @@ type getOrdersClientTransport struct {
 }
 
 // EncodeRequest method for encoding requests on client side
-func (t *getOrdersClientTransport) EncodeRequest(ctx context.Context, r *fasthttp.Request, ) (err error) {
-	r.Header.SetMethod(t.method)
-	r.SetRequestURI(t.pathTemplate)
-	r.Header.Set("Content-Type", "application/json")
-	r.SetBodyStreamWriter(func(w *bufio.Writer) {
-		if err = json.NewEncoder(w).Encode(); err != nil {
-			return
-		}
-	})
+func (t *getOrdersClientTransport) EncodeRequest() (err error) {
 	return
 }
 
 // DecodeResponse method for decoding response on client side
-func (t *getOrdersClientTransport) DecodeResponse(ctx context.Context, r *fasthttp.Response) (response v1.OrdersResponse, err error) {
+func (t *getOrdersClientTransport) DecodeResponse(r *fasthttp.Response) (response v1.OrdersResponse, err error) {
 	if r.StatusCode() != http.StatusOK {
 		err = t.errorProcessor.Decode(r)
 		return
