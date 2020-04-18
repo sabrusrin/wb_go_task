@@ -15,7 +15,7 @@ type ServiceMock struct {
 func (s *ServiceMock) GetServiceUser(
 	ctx context.Context, request *v1.UserRequest,
 ) (response v1.UserResponse, err error) {
-	args := s.Called(ctx, request)
+	args := s.Called(context.Background(), request)
 	if a, ok := args.Get(0).(v1.UserResponse); ok {
 		return a, args.Error(1)
 	}
@@ -25,7 +25,7 @@ func (s *ServiceMock) GetServiceUser(
 func (s *ServiceMock) PutServiceOrder(
 	ctx context.Context, request *v1.OrdersRequest,
 ) (response v1.OrdersResponse, err error) {
-	args := s.Called(ctx, request)
+	args := s.Called(context.Background(), request)
 	if a, ok := args.Get(0).(v1.OrdersResponse); ok {
 		return a, args.Error(1)
 	}
@@ -35,7 +35,7 @@ func (s *ServiceMock) PutServiceOrder(
 func (s *ServiceMock) GetUser(
 	ctx context.Context, request *v1.UserRequest,
 ) (response v1.UserResponse, err error) {
-	args := s.Called(ctx, request)
+	args := s.Called(context.Background(), request)
 	if a, ok := args.Get(0).(v1.UserResponse); ok {
 		return a, args.Error(1)
 	}

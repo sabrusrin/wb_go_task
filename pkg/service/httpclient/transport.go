@@ -139,11 +139,6 @@ func (t *getUserClientTransport) EncodeRequest(ctx context.Context, r *fasthttp.
 	r.Header.SetMethod(t.method)
 	r.SetRequestURI(fmt.Sprintf(t.pathTemplate, request.UserId))
 	r.Header.Set("Content-Type", "application/json")
-	r.SetBodyStreamWriter(func(w *bufio.Writer) {
-		if err = json.NewEncoder(w).Encode(request); err != nil {
-			return
-		}
-	})
 	return
 }
 

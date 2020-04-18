@@ -5,7 +5,6 @@ package httpclient
 
 import (
 	"context"
-
 	"github.com/valyala/fasthttp"
 
 	v1 "github.com/sabrusrin/wb_go_task/pkg/api/v1"
