@@ -26,6 +26,12 @@ const (
 	putServiceOrderSuccess = "PutServiceOrder success test"
 	getUserSuccess         = "GetUser success test"
 	getOrdersSuccess       = "GetOrders success test"
+	getServiceUserFail     = "GetServiceUser fail test"
+	putServiceOrderFail    = "PutServiceOrder fail test"
+	getUserFail            = "GetUser fail test"
+
+	serviceUserError = "error: bad user ID"
+	serviceOrdersError = "error: bad orders ID"
 
 	serviceMethodGetServiceUser  = "GetServiceUser"
 	serviceMethodPutServiceOrder = "PutServiceOrder"
@@ -48,6 +54,7 @@ func TestClient_GetServiceUserSuccess(t *testing.T) {
 		Data:        nil,
 		CustomError: nil,
 	}
+
 	t.Run(getServiceUserSuccess, func(t *testing.T) {
 		serviceMock := new(service.ServiceMock)
 		serviceMock.On(serviceMethodGetServiceUser, context.Background(), &initServiceUser).
@@ -64,8 +71,39 @@ func TestClient_GetServiceUserSuccess(t *testing.T) {
 			}
 		}()
 		time.Sleep(serverLaunchingWaitSleep)
+
 		response, err := client.GetServiceUser(context.Background(), &initServiceUser)
 		assert.NoError(t, err, "unexpected error:", err)
+		assert.EqualValues(t, expectedResponse, response)
+	})
+}
+
+func TestClient_GetServiceUserFail(t *testing.T) {
+	initServiceUser := v1.UserRequest{UserId: -1}
+	expectedResponse := v1.UserResponse{}
+
+	t.Run(getServiceUserFail, func(t *testing.T) {
+		serviceMock := new(service.ServiceMock)
+		serviceMock.On(serviceMethodGetServiceUser, context.Background(), &initServiceUser).
+			Return(expectedResponse,
+				serv.NewError(http.StatusServiceUnavailable, serviceUserError)).
+			Once()
+
+		server, client := makeServer(
+			serverAddress,
+			serverHost,
+			serviceMock,
+		)
+		defer func() {
+			err := server.Shutdown()
+			if err != nil {
+				log.Printf("server shut down err: %v", err)
+			}
+		}()
+		time.Sleep(serverLaunchingWaitSleep)
+
+		response, err := client.GetServiceUser(context.Background(), &initServiceUser)
+		assert.Equal(t, serv.NewError(http.StatusServiceUnavailable, serviceUserError), err)
 		assert.EqualValues(t, expectedResponse, response)
 	})
 }
@@ -78,10 +116,12 @@ func TestClient_PutServiceOrderSuccess(t *testing.T) {
 		Data:        nil,
 		CustomError: nil,
 	}
+
 	t.Run(putServiceOrderSuccess, func(t *testing.T) {
 		serviceMock := new(service.ServiceMock)
 		serviceMock.On(serviceMethodPutServiceOrder, context.Background(), &initServiceOrder).
 			Return(expectedResponse, nilClientError).Once()
+
 		server, client := makeServer(
 			serverAddress,
 			serverHost,
@@ -94,8 +134,39 @@ func TestClient_PutServiceOrderSuccess(t *testing.T) {
 			}
 		}()
 		time.Sleep(serverLaunchingWaitSleep)
+
 		response, err := client.PutServiceOrder(context.Background(), &initServiceOrder)
 		assert.NoError(t, err, "unexpected error:", err)
+		assert.EqualValues(t, expectedResponse, response)
+	})
+}
+
+func TestClient_PutServiceOrderFail(t *testing.T) {
+	initServiceOrder := v1.OrdersRequest{OrderId: 0}
+	expectedResponse := v1.OrdersResponse{}
+
+	t.Run(putServiceOrderFail, func(t *testing.T) {
+		serviceMock := new(service.ServiceMock)
+		serviceMock.On(serviceMethodPutServiceOrder, context.Background(), &initServiceOrder).
+			Return(expectedResponse,
+				serv.NewError(http.StatusServiceUnavailable, serviceOrdersError)).
+			Once()
+
+		server, client := makeServer(
+			serverAddress,
+			serverHost,
+			serviceMock,
+		)
+		defer func() {
+			err := server.Shutdown()
+			if err != nil {
+				log.Printf("server shut down err: %v", err)
+			}
+		}()
+		time.Sleep(serverLaunchingWaitSleep)
+
+		response, err := client.PutServiceOrder(context.Background(), &initServiceOrder)
+		assert.Equal(t, serv.NewError(http.StatusServiceUnavailable, serviceOrdersError), err)
 		assert.EqualValues(t, expectedResponse, response)
 	})
 }
@@ -108,10 +179,12 @@ func TestClient_GetUserSuccess(t *testing.T) {
 		Data:        nil,
 		CustomError: nil,
 	}
+
 	t.Run(getUserSuccess, func(t *testing.T) {
 		serviceMock := new(service.ServiceMock)
 		serviceMock.On(serviceMethodGetUser, context.Background(), &initServiceUser).
 			Return(expectedResponse, nilClientError).Once()
+
 		server, client := makeServer(
 			serverAddress,
 			serverHost,
@@ -124,23 +197,24 @@ func TestClient_GetUserSuccess(t *testing.T) {
 			}
 		}()
 		time.Sleep(serverLaunchingWaitSleep)
+
 		response, err := client.GetUser(context.Background(), &initServiceUser)
 		assert.NoError(t, err, "unexpected error:", err)
 		assert.EqualValues(t, expectedResponse, response)
 	})
 }
 
-func TestClient_GetOrdersSuccess(t *testing.T) {
-	expectedResponse := v1.OrdersResponse{
-		Error:       false,
-		ErrorText:   "",
-		Data:        nil,
-		CustomError: nil,
-	}
-	t.Run(getOrdersSuccess, func(t *testing.T) {
+func TestClient_GetUserFail(t *testing.T) {
+	initServiceUser := v1.UserRequest{UserId: -1}
+	expectedResponse := v1.UserResponse{}
+
+	t.Run(getUserFail, func(t *testing.T) {
 		serviceMock := new(service.ServiceMock)
-		serviceMock.On(serviceMethodGetOrders).
-			Return(expectedResponse).Once()
+		serviceMock.On(serviceMethodGetUser, context.Background(), &initServiceUser).
+			Return(expectedResponse,
+				serv.NewError(http.StatusServiceUnavailable, serviceUserError)).
+			Once()
+
 		server, client := makeServer(
 			serverAddress,
 			serverHost,
@@ -152,6 +226,39 @@ func TestClient_GetOrdersSuccess(t *testing.T) {
 				log.Printf("server shut down err: %v", err)
 			}
 		}()
+		time.Sleep(serverLaunchingWaitSleep)
+
+		response, err := client.GetUser(context.Background(), &initServiceUser)
+		assert.Equal(t, serv.NewError(http.StatusServiceUnavailable, serviceUserError), err)
+		assert.EqualValues(t, expectedResponse, response)
+	})
+}
+
+func TestClient_GetOrdersSuccess(t *testing.T) {
+	expectedResponse := v1.OrdersResponse{
+		Error:       false,
+		ErrorText:   "",
+		Data:        nil,
+		CustomError: nil,
+	}
+
+	t.Run(getOrdersSuccess, func(t *testing.T) {
+		serviceMock := new(service.ServiceMock)
+		serviceMock.On(serviceMethodGetOrders).
+			Return(expectedResponse).Once()
+
+		server, client := makeServer(
+			serverAddress,
+			serverHost,
+			serviceMock,
+		)
+		defer func() {
+			err := server.Shutdown()
+			if err != nil {
+				log.Printf("server shut down err: %v", err)
+			}
+		}()
+
 		time.Sleep(serverLaunchingWaitSleep)
 		response := client.GetOrders()
 		assert.EqualValues(t, expectedResponse, response)
