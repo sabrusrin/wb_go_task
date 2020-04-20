@@ -1,0 +1,41 @@
+# github.com/buaazp/fasthttprouter v0.1.1
+## explicit
+github.com/buaazp/fasthttprouter
+# github.com/davecgh/go-spew v1.1.1
+github.com/davecgh/go-spew/spew
+# github.com/go-kit/kit v0.10.0
+## explicit
+github.com/go-kit/kit/log
+github.com/go-kit/kit/log/level
+github.com/go-kit/kit/metrics
+# github.com/go-logfmt/logfmt v0.5.0
+github.com/go-logfmt/logfmt
+# github.com/klauspost/compress v1.8.2
+github.com/klauspost/compress/flate
+github.com/klauspost/compress/gzip
+github.com/klauspost/compress/zlib
+# github.com/klauspost/cpuid v1.2.1
+github.com/klauspost/cpuid
+# github.com/mailru/easyjson v0.7.1
+## explicit
+github.com/mailru/easyjson
+github.com/mailru/easyjson/buffer
+github.com/mailru/easyjson/jlexer
+github.com/mailru/easyjson/jwriter
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
+# github.com/stretchr/objx v0.1.1
+github.com/stretchr/objx
+# github.com/stretchr/testify v1.4.0
+## explicit
+github.com/stretchr/testify/assert
+github.com/stretchr/testify/mock
+# github.com/valyala/bytebufferpool v1.0.0
+github.com/valyala/bytebufferpool
+# github.com/valyala/fasthttp v1.9.0
+## explicit
+github.com/valyala/fasthttp
+github.com/valyala/fasthttp/fasthttputil
+github.com/valyala/fasthttp/stackless
+# gopkg.in/yaml.v2 v2.2.2
+gopkg.in/yaml.v2
