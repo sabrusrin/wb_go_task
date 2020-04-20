@@ -5,9 +5,12 @@ package httpserver
 
 import (
 	"context"
+	"github.com/buaazp/fasthttprouter"
 	"github.com/valyala/fasthttp"
+	"net/http"
 
 	v1 "github.com/sabrusrin/wb_go_task/pkg/api/v1"
+	serv "github.com/sabrusrin/wb_go_task/pkg/httpserver"
 )
 
 type errorProcessor interface {
@@ -159,4 +162,37 @@ func NewGetOrdersServer(transport GetOrdersTransport, service service, errorProc
 		errorProcessor: errorProcessor,
 	}
 	return ls.ServeHTTP
+}
+
+func NewPreparedServer(svc service) *fasthttprouter.Router {
+	errorProcessor := serv.NewErrorProcessor(http.StatusInternalServerError, "internal error")
+
+	getServiceUserTransport := NewGetServiceUserTransport(serv.NewError)
+	putServiceOrderTransport := NewPutServiceOrderTransport(serv.NewError)
+	getUserTransport := NewGetUserTransport(serv.NewError)
+	getOrdersTransport := NewGetOrdersTransport(serv.NewError)
+
+	return serv.MakeFastHTTPRouter(
+		[]*serv.HandlerSettings{
+			{
+				Path:    URIPathGetServiceUser,
+				Method:  http.MethodGet,
+				Handler: NewGetServiceUserServer(getServiceUserTransport, svc, errorProcessor),
+			},
+			{
+				Path:    URIPathPutServiceOrder,
+				Method:  http.MethodPost,
+				Handler: NewPutServiceOrderServer(putServiceOrderTransport, svc, errorProcessor),
+			},
+			{
+				Path:    URIPathGetUser,
+				Method:  http.MethodGet,
+				Handler: NewGetUserServer(getUserTransport, svc, errorProcessor),
+			},
+			{
+				Path:    URIPathGetOrders,
+				Method:  http.MethodGet,
+				Handler: NewGetOrdersServer(getOrdersTransport, svc, errorProcessor),
+			},
+		})
 }

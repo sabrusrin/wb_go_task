@@ -5,6 +5,7 @@ package httpclient
 
 import (
 	"context"
+	"github.com/sabrusrin/wb_go_task/pkg/service/httpserver"
 	"github.com/valyala/fasthttp"
 
 	v1 "github.com/sabrusrin/wb_go_task/pkg/api/v1"
@@ -123,44 +124,34 @@ func NewPreparedClient(
 	maxConns int,
 	errorProcessor errorProcessor,
 	errorCreator errorCreator,
-
-	uriPathGetServiceUser string,
-	uriPathPutServiceOrder string,
-	uriPathGetUser string,
-	uriPathGetOrders string,
-
-	httpMethodGetServiceUser string,
-	httpMethodPutServiceOrder string,
-	httpMethodGetUser string,
-	httpMethodGetOrders string,
 ) Service {
 
 	transportGetServiceUser := NewGetServiceUserClientTransport(
 		errorProcessor,
 		errorCreator,
-		serverURL+uriPathGetServiceUser,
-		httpMethodGetServiceUser,
+		serverURL+httpserver.URIPathClientGetServiceUser,
+		httpserver.HTTPMethodGetServiceUser,
 	)
 
 	transportPutServiceOrder := NewPutServiceOrderClientTransport(
 		errorProcessor,
 		errorCreator,
-		serverURL+uriPathPutServiceOrder,
-		httpMethodPutServiceOrder,
+		serverURL+httpserver.URIPathClientPutServiceOrder,
+		httpserver.HTTPMethodPutServiceOrder,
 	)
 
 	transportGetUser := NewGetUserClientTransport(
 		errorProcessor,
 		errorCreator,
-		serverURL+uriPathGetUser,
-		httpMethodGetUser,
+		serverURL+httpserver.URIPathClientGetUser,
+		httpserver.HTTPMethodGetUser,
 	)
 
 	transportGetOrders := NewGetOrdersClientTransport(
 		errorProcessor,
 		errorCreator,
-		serverURL+uriPathGetOrders,
-		httpMethodGetOrders,
+		serverURL+httpserver.URIPathClientGetOrders,
+		httpserver.HTTPMethodGetOrders,
 	)
 
 	return NewClient(

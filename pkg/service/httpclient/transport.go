@@ -191,6 +191,7 @@ func (t *getOrdersClientTransport) DecodeResponse(r *fasthttp.Response) (respons
 		err = t.errorProcessor.Decode(r)
 		return
 	}
+	fmt.Printf("KKKKKKKKKKKKKKKKKKKKKK\n\nl%v\n\n", r.Body())
 	err = response.UnmarshalJSON(r.Body())
 	return
 }
