@@ -87,7 +87,7 @@ func (s *client) GetOrders() (response v1.OrdersResponse) {
 		fasthttp.ReleaseRequest(req)
 		fasthttp.ReleaseResponse(res)
 	}()
-	if err = s.transportGetOrders.EncodeRequest(); err != nil {
+	if err = s.transportGetOrders.EncodeRequest(req); err != nil {
 		return
 	}
 	err = s.cli.Do(req, res)

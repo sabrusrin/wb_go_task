@@ -169,7 +169,7 @@ func NewGetUserClientTransport(
 
 // GetOrdersClientTransport transport interface
 type GetOrdersClientTransport interface {
-	EncodeRequest() (err error)
+	EncodeRequest(r *fasthttp.Request) (err error)
 	DecodeResponse(r *fasthttp.Response) (response v1.OrdersResponse, err error)
 }
 
@@ -181,7 +181,10 @@ type getOrdersClientTransport struct {
 }
 
 // EncodeRequest method for encoding requests on client side
-func (t *getOrdersClientTransport) EncodeRequest() (err error) {
+func (t *getOrdersClientTransport) EncodeRequest(r *fasthttp.Request) (err error) {
+	r.Header.SetMethod(t.method)
+	r.SetRequestURI(t.pathTemplate)
+	r.Header.Set("Content-Type", "application/json")
 	return
 }
 
@@ -191,7 +194,6 @@ func (t *getOrdersClientTransport) DecodeResponse(r *fasthttp.Response) (respons
 		err = t.errorProcessor.Decode(r)
 		return
 	}
-	fmt.Printf("KKKKKKKKKKKKKKKKKKKKKK\n\nl%v\n\n", r.Body())
 	err = response.UnmarshalJSON(r.Body())
 	return
 }
