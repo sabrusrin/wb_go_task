@@ -6,12 +6,12 @@ package httpserver
 const (
 	URIPrefix = "/api/v1"
 
-	URIPathClientGetServiceUser  = URIPrefix + "/user/%d"
+	URIPathClientGetServiceUser  = URIPrefix + "/user"
 	URIPathClientPutServiceOrder = URIPrefix + "/orders"
 	URIPathClientGetUser         = URIPrefix + "/user/%d/count"
 	URIPathClientGetOrders       = URIPrefix + "/orders"
 
-	URIPathGetServiceUser  = URIPrefix + "/user/:id"
+	URIPathGetServiceUser  = URIPrefix + "/user"
 	URIPathPutServiceOrder = URIPrefix + "/orders"
 	URIPathGetUser         = URIPrefix + "/user/:id/count"
 	URIPathGetOrders       = URIPrefix + "/orders"
